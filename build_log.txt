@@ -1,0 +1,56 @@
+In file included from src\Cache.cpp:2:0:
+include/Cache.h:7:20: fatal error: optional: No such file or directory
+ #include <optional>
+                    ^
+compilation terminated.
+In file included from include/Simulator.h:9:0,
+                 from include/Cli.h:12,
+                 from src\Cli.cpp:2:
+include/Cache.h:7:20: fatal error: optional: No such file or directory
+ #include <optional>
+                    ^
+compilation terminated.
+In file included from include/Metrics.h:6:0,
+                 from src\Metrics.cpp:2:
+include/Cache.h:7:20: fatal error: optional: No such file or directory
+ #include <optional>
+                    ^
+compilation terminated.
+In file included from include/Simulator.h:9:0,
+                 from src\PolicyTrainer.cpp:11:
+include/Cache.h:7:20: fatal error: optional: No such file or directory
+ #include <optional>
+                    ^
+compilation terminated.
+In file included from include/Simulator.h:9:0,
+                 from include/ResultExporter.h:9,
+                 from src\ResultExporter.cpp:2:
+include/Cache.h:7:20: fatal error: optional: No such file or directory
+ #include <optional>
+                    ^
+compilation terminated.
+In file included from include/Simulator.h:9:0,
+                 from src\Simulator.cpp:2:
+include/Cache.h:7:20: fatal error: optional: No such file or directory
+ #include <optional>
+                    ^
+compilation terminated.
+In file included from src\Tracer.cpp:2:0:
+include/Tracer.h:6:20: fatal error: optional: No such file or directory
+ #include <optional>
+                    ^
+compilation terminated.
+In file included from include/Simulator.h:9:0,
+                 from include/WebExporter.h:10,
+                 from src\WebExporter.cpp:2:
+include/Cache.h:7:20: fatal error: optional: No such file or directory
+ #include <optional>
+                    ^
+compilation terminated.
+In file included from include/Simulator.h:9:0,
+                 from include/Cli.h:12,
+                 from src\main.cpp:7:
+include/Cache.h:7:20: fatal error: optional: No such file or directory
+ #include <optional>
+                    ^
+compilation terminated.

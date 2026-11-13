@@ -1,0 +1,22 @@
+# build outputs
+build/
+build-*/
+cmake-build-*/
+out/
+*.o
+*.obj
+*.d
+*.exe
+*.pdb
+*.ilk
+cache_sim
+unit_tests
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+# temporary files written by the tests
+test_trace_tmp.csv
+weights_tmp_test.txt

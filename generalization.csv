@@ -1,0 +1,8 @@
+policy,train_hit_ratio,test_hit_ratio
+FIFO,0.35823,0.38787
+LRU,0.38779,0.42008
+LFU,0.36796,0.375
+AI,0.54186,0.5388
+AI-K8,0.54191,0.56463
+Adaptive,0.42982,0.45843
+Belady-OPT,0.67532,0.71228

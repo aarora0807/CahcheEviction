@@ -1,0 +1,9 @@
+# Keep Windows batch files with CRLF line endings, byte for byte.
+*.bat -text
+# Everything else: normal text handling.
+*.cpp text
+*.h text
+*.md text
+*.js text
+*.css text
+*.html text

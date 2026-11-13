@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CacheSim Studio</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app" id="app">
+<aside class="sidebar">
+  <div class="brand"><span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>CacheSim<small>Studio</small></span></div>
+  <nav id="tabs" aria-label="Sections">
+    <button data-tab="overview" class="active"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></button>
+    <button data-tab="sim"><svg viewBox="0 0 24 24"><path d="M4 20h16M7 16V9M12 16V5M17 16v-4"/></svg><span>Simulator</span></button>
+    <button data-tab="race"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg><span>Live Race</span></button>
+    <button data-tab="lab"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/></svg><span>AI Lab</span></button>
+    <button data-tab="patterns"><svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 4 4-7 5 9"/></svg><span>Workloads</span></button>
+    <button data-tab="how"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span>How it works</span></button>
+  </nav>
+  <div class="side-foot">
+    <button id="chatToggle" class="btn small block"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg> Ask CacheSim</button>
+    <div id="check" class="check pending" title="The app replays the C++ results and compares every number">Checking engine&hellip;</div>
+  </div>
+</aside>
+
+<main id="main">
+  <!-- ============================== OVERVIEW ============================== -->
+  <section id="overview" class="tab active">
+    <div class="hero">
+      <div class="hero-text">
+        <p class="kicker">OOP project &middot; C++17 &middot; genetic algorithm</p>
+        <h1>Which item should a full cache <span class="accent">forget</span>?</h1>
+        <p class="lead">Seven eviction policies race on seven kinds of traffic, including an <b>AI policy whose rule was learned by a genetic algorithm</b>. Every number on this page comes from the C++ simulator.</p>
+        <div class="hero-actions">
+          <button class="btn primary" data-goto="race">&#9654;&nbsp; Watch a live race</button>
+          <button class="btn" data-goto="lab">Try the AI Lab</button>
+        </div>
+      </div>
+      <div class="kpis" id="kpis"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>Hit ratio on every workload</h2><p>Higher is better. Click a name in the legend to hide or show that policy.</p></div>
+      <div class="chart-box tall"><canvas id="chartHits" aria-label="Hit ratio by workload and policy"></canvas></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-head"><h2>The genetic algorithm learning</h2><p>Best and average score of 40 candidate rules over 60 generations.</p></div>
+        <div class="chart-box"><canvas id="chartTrain" aria-label="Genetic algorithm learning curve"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Does it work on new data?</h2><p>Average hit ratio on training workloads vs workloads it never saw.</p></div>
+        <div class="chart-box"><canvas id="chartGen" aria-label="Train vs test hit ratio"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Speed</h2><p>Million requests per second as the cache grows (log scale).</p></div>
+        <div class="chart-box"><canvas id="chartSpeed" aria-label="Throughput by cache size"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>What the AI learned</h2><p>Positive weight pushes an item out; negative weight protects it.</p></div>
+        <div id="weights" class="weights"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>All results</h2><p id="tableNote">Hit ratio (%) for each workload. &#9733; marks the best real policy.</p></div>
+      <div id="resultsTable" class="table-wrap"></div>
+    </div>
+  </section>
+
+  <!-- ============================== SIMULATOR ============================== -->
+  <section id="sim" class="tab">
+    <div class="page-head"><h2>Simulator</h2><p>Set up an experiment, press <b>Run</b>, and compare the policies. Everything runs inside this app.</p></div>
+    <div class="sim-layout">
+      <div class="panel form">
+        <label for="simWorkload">Workload</label>
+        <select id="simWorkload"></select>
+        <p id="simAbout" class="muted small"></p>
+        <div id="simAlphaRow"><label for="simAlpha">Popularity skew: <b id="simAlphaVal">0.90</b></label><input type="range" id="simAlpha" min="0.5" max="1.5" step="0.05" value="0.9"></div>
+        <div id="simCustomRow" hidden><label for="simCustom">Your requests</label><textarea id="simCustom" rows="3" spellcheck="false">1 2 3 4 1 2 5 1 2 3 4 5</textarea></div>
+        <div class="row2">
+          <div><label for="simCap">Cache size</label><input type="number" id="simCap" min="1" max="500" value="50"></div>
+          <div><label for="simN">Requests</label><select id="simN"><option value="10000">10,000</option><option value="50000">50,000</option><option value="100000" selected>100,000</option></select></div>
+        </div>
+        <div class="row2">
+          <div><label for="simUniverse">Different keys</label><input type="number" id="simUniverse" min="10" max="100000" value="1000"></div>
+          <div><label for="simSeed">Random seed</label><input type="number" id="simSeed" min="0" value="42"></div>
+        </div>
+        <label>Policies</label>
+        <div id="simPolicies" class="toggles two"></div>
+        <label for="simAiRule">AI rule</label>
+        <select id="simAiRule"><option value="ga">Learned by the genetic algorithm</option><option value="lab">My rule from the AI Lab</option></select>
+        <button id="simRun" class="btn primary block big">&#9654;&nbsp; Run simulation</button>
+        <div class="progress thin"><div id="simProgress"></div></div>
+        <p id="simStatus" class="muted small">Ready.</p>
+      </div>
+      <div class="sim-results">
+        <div id="simSummary" class="kpis four"></div>
+        <div class="grid2">
+          <div class="card"><div class="card-head"><h2>Hit ratio</h2><p>Share of requests answered from the cache.</p></div><div class="chart-box"><canvas id="chartSimBar" aria-label="Hit ratio per policy"></canvas></div></div>
+          <div class="card"><div class="card-head"><h2>During the run</h2><p>Running hit ratio as the requests arrive.</p></div><div class="chart-box"><canvas id="chartSimCurve" aria-label="Hit ratio over time"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head row"><h2>Details</h2><div class="evo-buttons"><button id="simExplain" class="btn small">Ask the assistant to explain</button><button id="simCsv" class="btn small">Export CSV</button></div></div>
+          <div id="simTable" class="table-wrap"><p class="muted">Press <b>Run simulation</b> to see results.</p></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Run history</h2><p>Click a run to see it again.</p></div>
+          <div id="simHistory" class="history-list"><p class="muted small">No runs yet.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== LIVE RACE ============================== -->
+  <section id="race" class="tab">
+    <div class="race-layout">
+      <aside class="panel">
+        <label for="scenario">Example</label>
+        <select id="scenario"></select>
+        <p id="scenarioDesc" class="muted small"></p>
+
+        <label for="cap">Cache size: <b id="capVal"></b> items</label>
+        <input type="range" id="cap" min="1" max="8" value="3">
+
+        <label for="seq">Requests <span class="muted">(numbers, separated by spaces)</span></label>
+        <textarea id="seq" rows="3" spellcheck="false"></textarea>
+        <div class="quick" aria-label="Make a request pattern">
+          <button data-gen="loop">Loop</button><button data-gen="scan">Scan</button><button data-gen="phase">Hot set moves</button><button data-gen="zipf">Popular keys</button><button data-gen="random">Random</button>
+        </div>
+        <button id="applySeq" class="btn small block">Use these requests</button>
+        <p id="seqError" class="error small"></p>
+
+        <label>Policies in the race</label>
+        <div id="policyToggles" class="toggles"></div>
+
+        <label for="speed">Speed</label>
+        <input type="range" id="speed" min="1" max="10" value="5">
+      </aside>
+
+      <div class="stage">
+        <div class="controls">
+          <button id="btnReset" class="icon" title="Back to start" aria-label="Back to start">&#9198;</button>
+          <button id="btnBack" class="icon" title="One step back" aria-label="One step back">&#9664;</button>
+          <button id="btnPlay" class="btn primary play">&#9654; Play</button>
+          <button id="btnStep" class="icon" title="One step forward" aria-label="One step forward">&#9654;&#10074;</button>
+          <div class="progress"><div id="progressBar"></div></div>
+          <span id="stepLabel" class="muted"></span>
+        </div>
+        <div id="ribbon" class="ribbon" aria-label="Request list"></div>
+        <div class="card standings-card">
+          <div class="card-head row"><h2>Standings</h2><span class="muted small">hits so far</span></div>
+          <div id="standings" class="standings"></div>
+        </div>
+        <div id="lanes" class="lanes"></div>
+        <div id="aiExplain" class="card ai-explain"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== AI LAB ============================== -->
+  <section id="lab" class="tab">
+    <div class="lab-layout">
+      <aside class="panel">
+        <h2>Your rule</h2>
+        <p class="muted small">score = w1&middot;recency + w2&middot;frequency + w3&middot;age + w4&middot;gap. The item with the highest score is thrown out. Move the sliders and watch the hit ratios change instantly.</p>
+        <div id="sliders"></div>
+        <label>Start from</label>
+        <div class="quick" id="presets"></div>
+        <div class="your-score">
+          <span class="muted small">Your average hit ratio</span>
+          <b id="labAvg">&ndash;</b>
+          <div id="labCompare" class="small"></div>
+        </div>
+      </aside>
+      <div class="stage">
+        <div class="card">
+          <div class="card-head"><h2>Hit ratio with your rule</h2><p>Six real request traces from the C++ simulator (8,000 requests each, cache size 50).</p></div>
+          <div class="chart-box tall"><canvas id="chartLab" aria-label="Hit ratio with your weights"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-head row">
+            <div><h2>Evolve a rule in your browser</h2><p>A small genetic algorithm (16 rules &times; 12 generations) searches for good weights, just like the C++ trainer.</p></div>
+            <div class="evo-buttons"><button id="btnEvolve" class="btn primary">Run the genetic algorithm</button><button id="btnApplyBest" class="btn" disabled>Use the best rule</button></div>
+          </div>
+          <p id="evoStatus" class="muted small"></p>
+          <div class="chart-box"><canvas id="chartEvo" aria-label="Genetic algorithm progress"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================== WORKLOADS ============================== -->
+  <section id="patterns" class="tab">
+    <div class="card-head page-head"><h2>What each workload looks like</h2><p>Each dot is one request: time goes left to right, and each row is one key. Patterns explain why policies win or lose.</p></div>
+    <div id="patternGrid" class="pattern-grid"></div>
+  </section>
+
+  <!-- ============================== HOW IT WORKS ============================== -->
+  <section id="how" class="tab">
+    <div class="card-head page-head"><h2>How it works</h2><p>The same steps run for every request, for every policy.</p></div>
+    <div class="flow">
+      <div class="flow-step"><span>1</span><b>Request</b><p>A workload generator produces the next key.</p></div>
+      <div class="flow-step"><span>2</span><b>Cache lookup</b><p>Found? That is a <em>hit</em>. Not found? A <em>miss</em>.</p></div>
+      <div class="flow-step"><span>3</span><b>Eviction</b><p>If the cache is full, the policy picks the item to throw out.</p></div>
+      <div class="flow-step"><span>4</span><b>Measure</b><p>Observers count hits, misses and time.</p></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-head"><h2>Design patterns</h2></div>
+        <div class="patterns">
+          <div><span class="pill" style="--c:#FF6B47">Strategy</span><p>Every policy implements one interface, so the cache can swap policy at any time.</p></div>
+          <div><span class="pill" style="--c:#2EC4A6">Factory</span><p>Policies and workloads are created by name, e.g. "lru" or "zipf".</p></div>
+          <div><span class="pill" style="--c:#4EA1E0">Template Method</span><p>All workloads share the same steps; only "which key next" changes.</p></div>
+          <div><span class="pill" style="--c:#9B7BD1">Observer</span><p>Metrics, the tracer and this app's data exporter listen to cache events.</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>How fast is each policy?</h2></div>
+        <table class="plain">
+          <thead><tr><th>Policy</th><th>Pick a victim</th><th>Idea</th></tr></thead>
+          <tbody>
+            <tr><td>FIFO</td><td>O(1)</td><td>queue</td></tr>
+            <tr><td>LRU</td><td>O(1)</td><td>list + hash map</td></tr>
+            <tr><td>LFU</td><td>O(1)</td><td>frequency buckets</td></tr>
+            <tr><td>AI</td><td>O(n)</td><td>scores every item</td></tr>
+            <tr><td>AI-K8</td><td>O(8)</td><td>scores 8 random items</td></tr>
+            <tr><td>Adaptive</td><td>O(1)</td><td>3 shadow caches</td></tr>
+            <tr><td>Belady-OPT</td><td>O(log n)</td><td>needs the future</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2>Class diagram</h2></div>
+      <img class="uml" src="../docs/figures/uml.png" alt="UML class diagram of the simulator" onerror="this.parentElement.style.display='none'">
+    </div>
+    <div class="card note">
+      <h2>Is this really AI?</h2>
+      <p>Yes. A genetic algorithm is a classic AI search method: the program improves its own rule by testing many candidates and keeping the best, the way evolution works. It is not deep learning, and the result is just four numbers you can read and explain.</p>
+    </div>
+  </section>
+
+<footer class="foot">CacheSim Studio &middot; OOP project &middot; data from <code>cache_sim --export-web</code></footer>
+</main>
+<aside id="chat" class="chat" aria-label="Assistant">
+  <div class="chat-head">
+    <div class="chat-title"><span class="ai-dot"></span><div><b>Ask CacheSim</b><span>Claude Haiku 5.5 &middot; low effort</span></div></div>
+    <div><button id="chatSettingsBtn" class="icon-btn" title="Settings" aria-label="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button><button id="chatClose" class="icon-btn" title="Hide" aria-label="Hide assistant">&times;</button></div>
+  </div>
+  <div id="chatSettings" class="chat-settings" hidden>
+    <label for="apiKey">Your Anthropic API key</label>
+    <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+    <div class="row"><button id="saveKey" class="btn small primary">Save key</button><button id="forgetKey" class="btn small">Remove key</button></div>
+    <p class="muted small">Saved only inside this app on this PC. It is never written into the project folder. Create a key at <b>console.anthropic.com</b> &rarr; API keys.</p>
+    <p class="muted small">Low-cost settings: Claude Haiku 5.5, effort low, thinking off, answers up to 500 tokens, remembers the last 6 messages.</p>
+  </div>
+  <div id="chatLog" class="chat-log" aria-live="polite"></div>
+  <div id="chatChips" class="chips"></div>
+  <form id="chatForm" class="chat-input">
+    <textarea id="chatText" rows="2" placeholder="Ask about caches, policies or your results..." aria-label="Your question"></textarea>
+    <button class="btn primary" id="chatSend" type="submit">Send</button>
+  </form>
+  <div id="chatUsage" class="usage"></div>
+</aside>
+</div>
+
+
+<script src="vendor/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="vendor/anthropic-sdk.min.js"></script>
+<script src="app.js"></script>
+<script src="chat.js"></script>
+</body>
+</html>

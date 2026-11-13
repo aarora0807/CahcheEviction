@@ -1,0 +1,119 @@
+
+--- FIFO | capacity 3 | classic reference string ---
+ step | request | result | victim | cache contents
+------+---------+--------+--------+---------------------------
+    1 |       1 | MISS   |      - | [1]
+    2 |       2 | MISS   |      - | [1 2]
+    3 |       3 | MISS   |      - | [1 2 3]
+    4 |       4 | MISS   |      1 | [2 3 4]
+    5 |       1 | MISS   |      2 | [1 3 4]
+    6 |       2 | MISS   |      3 | [1 2 4]
+    7 |       5 | MISS   |      4 | [1 2 5]
+    8 |       1 | HIT    |      - | [1 2 5]
+    9 |       2 | HIT    |      - | [1 2 5]
+   10 |       3 | MISS   |      1 | [2 3 5]
+   11 |       4 | MISS   |      2 | [3 4 5]
+   12 |       5 | HIT    |      - | [3 4 5]
+hits=3 misses=9 evictions=6 hit ratio=25.00%
+
+--- LRU | capacity 3 | classic reference string ---
+ step | request | result | victim | cache contents
+------+---------+--------+--------+---------------------------
+    1 |       1 | MISS   |      - | [1]
+    2 |       2 | MISS   |      - | [1 2]
+    3 |       3 | MISS   |      - | [1 2 3]
+    4 |       4 | MISS   |      1 | [2 3 4]
+    5 |       1 | MISS   |      2 | [1 3 4]
+    6 |       2 | MISS   |      3 | [1 2 4]
+    7 |       5 | MISS   |      4 | [1 2 5]
+    8 |       1 | HIT    |      - | [1 2 5]
+    9 |       2 | HIT    |      - | [1 2 5]
+   10 |       3 | MISS   |      5 | [1 2 3]
+   11 |       4 | MISS   |      1 | [2 3 4]
+   12 |       5 | MISS   |      2 | [3 4 5]
+hits=2 misses=10 evictions=7 hit ratio=16.67%
+
+--- LFU | capacity 3 | classic reference string ---
+ step | request | result | victim | cache contents
+------+---------+--------+--------+---------------------------
+    1 |       1 | MISS   |      - | [1]
+    2 |       2 | MISS   |      - | [1 2]
+    3 |       3 | MISS   |      - | [1 2 3]
+    4 |       4 | MISS   |      1 | [2 3 4]
+    5 |       1 | MISS   |      2 | [1 3 4]
+    6 |       2 | MISS   |      3 | [1 2 4]
+    7 |       5 | MISS   |      4 | [1 2 5]
+    8 |       1 | HIT    |      - | [1 2 5]
+    9 |       2 | HIT    |      - | [1 2 5]
+   10 |       3 | MISS   |      5 | [1 2 3]
+   11 |       4 | MISS   |      3 | [1 2 4]
+   12 |       5 | MISS   |      4 | [1 2 5]
+hits=2 misses=10 evictions=7 hit ratio=16.67%
+
+--- AI | capacity 3 | classic reference string ---
+ step | request | result | victim | cache contents
+------+---------+--------+--------+---------------------------
+    1 |       1 | MISS   |      - | [1]
+    2 |       2 | MISS   |      - | [1 2]
+    3 |       3 | MISS   |      - | [1 2 3]
+    4 |       4 | MISS   |      3 | [1 2 4]
+    5 |       1 | HIT    |      - | [1 2 4]
+    6 |       2 | HIT    |      - | [1 2 4]
+    7 |       5 | MISS   |      2 | [1 4 5]
+    8 |       1 | HIT    |      - | [1 4 5]
+    9 |       2 | MISS   |      1 | [2 4 5]
+   10 |       3 | MISS   |      2 | [3 4 5]
+   11 |       4 | HIT    |      - | [3 4 5]
+   12 |       5 | HIT    |      - | [3 4 5]
+hits=5 misses=7 evictions=4 hit ratio=41.67%
+
+--- AI-K8 | capacity 3 | classic reference string ---
+ step | request | result | victim | cache contents
+------+---------+--------+--------+---------------------------
+    1 |       1 | MISS   |      - | [1]
+    2 |       2 | MISS   |      - | [1 2]
+    3 |       3 | MISS   |      - | [1 2 3]
+    4 |       4 | MISS   |      3 | [1 2 4]
+    5 |       1 | HIT    |      - | [1 2 4]
+    6 |       2 | HIT    |      - | [1 2 4]
+    7 |       5 | MISS   |      2 | [1 4 5]
+    8 |       1 | HIT    |      - | [1 4 5]
+    9 |       2 | MISS   |      1 | [2 4 5]
+   10 |       3 | MISS   |      2 | [3 4 5]
+   11 |       4 | HIT    |      - | [3 4 5]
+   12 |       5 | HIT    |      - | [3 4 5]
+hits=5 misses=7 evictions=4 hit ratio=41.67%
+
+--- Adaptive | capacity 3 | classic reference string ---
+ step | request | result | victim | cache contents
+------+---------+--------+--------+---------------------------
+    1 |       1 | MISS   |      - | [1]
+    2 |       2 | MISS   |      - | [1 2]
+    3 |       3 | MISS   |      - | [1 2 3]
+    4 |       4 | MISS   |      1 | [2 3 4]
+    5 |       1 | MISS   |      2 | [1 3 4]
+    6 |       2 | MISS   |      3 | [1 2 4]
+    7 |       5 | MISS   |      4 | [1 2 5]
+    8 |       1 | HIT    |      - | [1 2 5]
+    9 |       2 | HIT    |      - | [1 2 5]
+   10 |       3 | MISS   |      5 | [1 2 3]
+   11 |       4 | MISS   |      1 | [2 3 4]
+   12 |       5 | MISS   |      2 | [3 4 5]
+hits=2 misses=10 evictions=7 hit ratio=16.67%
+
+--- Belady-OPT | capacity 3 | classic reference string ---
+ step | request | result | victim | cache contents
+------+---------+--------+--------+---------------------------
+    1 |       1 | MISS   |      - | [1]
+    2 |       2 | MISS   |      - | [1 2]
+    3 |       3 | MISS   |      - | [1 2 3]
+    4 |       4 | MISS   |      3 | [1 2 4]
+    5 |       1 | HIT    |      - | [1 2 4]
+    6 |       2 | HIT    |      - | [1 2 4]
+    7 |       5 | MISS   |      4 | [1 2 5]
+    8 |       1 | HIT    |      - | [1 2 5]
+    9 |       2 | HIT    |      - | [1 2 5]
+   10 |       3 | MISS   |      2 | [1 3 5]
+   11 |       4 | MISS   |      3 | [1 4 5]
+   12 |       5 | HIT    |      - | [1 4 5]
+hits=5 misses=7 evictions=4 hit ratio=41.67%

@@ -1,0 +1,11 @@
+
+=== Throughput benchmark: zipf(0.9), 200000 requests, universe = 16 x capacity ===
+  policy                cap 64         cap 512        cap 4096   (million requests / second)
+  FIFO                    8.53            9.37            9.30
+  LRU                     8.71            8.68            7.78
+  LFU                     6.24            6.29            6.05
+  AI                      1.87            0.30            0.04
+  AI-K8                   4.99            5.42            5.04
+  Adaptive                1.63            1.27            1.30
+  Belady-OPT              6.17            5.40            3.95
+Wrote results/benchmark.csv

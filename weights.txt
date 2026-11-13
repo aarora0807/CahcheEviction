@@ -1,0 +1,3 @@
+# AIPolicy weights (evolved by PolicyTrainer)
+# order: recency frequency age gap ; evict argmax(sum w_i * f_i)
+-0.45620675453431209 -0.43003543215015416 0.12773733413421648 0.31748612648948121
